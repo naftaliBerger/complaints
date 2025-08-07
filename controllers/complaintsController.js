@@ -1,5 +1,5 @@
 import { addComplaint,  getAllComplaints} from '../DAL/complaintsDal.js';
-
+//---------------------------------------------------------
 export async function createComplaint(req, res) {
   try {
     const { category, message } = req.body;
@@ -17,7 +17,7 @@ export async function createComplaint(req, res) {
   }
 }
 
-
+//---------------------------------------------------------
 export async function fetchAllComplaints(req, res) {
   try {
     const complaints = await getAllComplaints();
@@ -26,4 +26,20 @@ export async function fetchAllComplaints(req, res) {
     console.error('Error receiving complaints:', error);
     res.status(500).json({ error: 'Error receiving complaints' });
   }
+}
+//---------------------------------------------------------
+export async function checkAdmin(req, res) {
+    try {
+        const { password } = req.body;
+    
+        if (password !== process.env.ADMIN_PASSWORD) {
+        return res.status(403).json({ error: 'Forbidden: Invalid admin password' });
+        }
+        const complaints = await getAllComplaints();
+        res.status(200).json({ message: 'Admin access granted',complaints });
+        
+    } catch (error) {
+        console.error('Error checking admin:', error);
+        res.status(500).json({ error: 'Error checking admin' });
+    }
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <title>שליחת תלונה</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>טופס תלונה</h1>
+    <form id="complaintForm">
+      <input type="text" id="title" placeholder="נושא התלונה" required />
+      <textarea id="content" placeholder="פרטי התלונה" required></textarea>
+      <button type="submit" class="btn">שלח תלונה</button>
+    </form>
+
+    <hr />
+    <button onclick="location.href='admin.html'" class="btn admin">כניסת מפקד</button>
+  </div>
+
+  <script>
+    document.getElementById('complaintForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const category = document.getElementById('title').value;
+      const message = document.getElementById('content').value;
+
+      try {
+        const res = await fetch('/complaints', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category, message })
+        });
+
+        if (res.ok) {
+          alert('התלונה נשלחה בהצלחה');
+          document.getElementById('complaintForm').reset();
+        } else {
+          alert('שגיאה בשליחת התלונה');
+        }
+      } catch (error) {
+        console.error('שגיאה בבקשת שליחת תלונה:', error);
+        alert('אירעה שגיאה');
+      }
+    });
+  </script>
+</body>
+</html>

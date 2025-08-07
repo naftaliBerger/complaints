@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <title>ניהול תלונות</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>כניסת מפקד</h1>
+
+    <form id="adminForm">
+      <input type="password" id="password" placeholder="סיסמה" required />
+      <button type="submit" class="btn">התחבר</button>
+    </form>
+
+    <div id="complaintsList" style="display: none;">
+      <h2>כל התלונות</h2>
+      <ul id="complaintsUl"></ul>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('adminForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/complaints/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const complaints = data.complaints;  
+        const ul = document.getElementById('complaintsUl');
+        ul.innerHTML = '';
+
+        complaints.forEach(c => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${c.category}</strong><br>${c.message}`;
+          ul.appendChild(li);
+        });
+
+        document.getElementById('adminForm').style.display = 'none';
+        document.getElementById('complaintsList').style.display = 'block';
+      } else {
+        alert('סיסמה שגויה');
+      }
+    });
+  </script>
+</body>
+</html>
